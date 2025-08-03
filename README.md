@@ -1,6 +1,6 @@
 # User Weather App
 
-A **React + Next.js** application that displays user profiles along with current weather information based on their location. Users can save favorite profiles locally on the server and retrieve their weather data anytime.
+A **React + Next.js** application that displays user profiles along with current weather information based on their location. Users can save favorite profiles to SupaBase DB and retrieve their weather data anytime.
 
 ---
 
@@ -21,7 +21,7 @@ A **React + Next.js** application that displays user profiles along with current
   All third-party API requests (e.g., weather data from Open-Meteo) are proxied through Next.js API routes for improved security and API key hiding.
 
 - **Persistent Storage**  
-  Saved users are stored in a local JSON file (`/data/savedUsers.json`) on the server, avoiding the limitations of client-side localStorage.
+  Saved users are stored in a SupaBase DB, avoiding the limitations of client-side localStorage.
 
 - **Responsive Design**  
   Fully responsive UI that looks great on any device — from small phones to large desktops.
@@ -38,8 +38,10 @@ A **React + Next.js** application that displays user profiles along with current
        ├── users.ts           # API routes for saving, retrieving, deleting users
        └── weather.ts         # API route fetching weather from Open-Meteo
 /components                   # Reusable React components (UserCard, WeatherModal, Header, Breadcrumbs)
-/data                        # Local JSON file storage (savedUsers.json)
-/types                       # TypeScript interfaces and types
+/data                         # Local JSON file storage (savedUsers.json)
+/types                        # TypeScript interfaces and types
+/lib
+  ├── supabaseClient.ts       # Conection with SupaBase
 ```
 
 ---
@@ -49,7 +51,7 @@ A **React + Next.js** application that displays user profiles along with current
 | Method | Endpoint      | Description                            |
 |--------|---------------|----------------------------------------|
 | GET    | `/api/users`  | Retrieve saved users                   |
-| POST   | `/api/users`  | Save a new user to the local JSON file |
+| POST   | `/api/users`  | Save a new user to DB |
 | DELETE | `/api/users`  | Remove a user by email                 |
 | GET    | `/api/weather`| Fetch current weather by lat/lon       |
 
@@ -71,7 +73,6 @@ A **React + Next.js** application that displays user profiles along with current
 
 - Implement **user authentication** to personalize saved profiles.
 - Enhance weather data with more metrics such as humidity, wind speed, and forecasts.
-- Switch from local JSON file storage to a **real database** (e.g., MongoDB, PostgreSQL).
 - Add **pagination** and filtering for managing large user lists.
 
 ---

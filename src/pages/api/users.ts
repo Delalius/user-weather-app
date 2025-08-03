@@ -16,7 +16,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: "Invalid user data" });
     }
 
-    // Проверка существования пользователя
     const { data: existingUser, error: fetchError } = await supabase
       .from("users")
       .select("*")
@@ -24,7 +23,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .single();
 
     if (fetchError && fetchError.code !== "PGRST116") {
-      // Ошибка запроса, кроме "no rows found"
       return res.status(500).json({ error: fetchError.message });
     }
 
@@ -32,7 +30,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(409).json({ error: "User already saved" });
     }
 
-    // Вставка нового пользователя
     const { error: insertError } = await supabase.from("users").insert({
       gender: newUser.gender,
       first_name: newUser.name.first,

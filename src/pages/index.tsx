@@ -12,7 +12,7 @@ export default function Home() {
   // Fetch users from randomuser API and append them to existing list
   const fetchUsers = async () => {
     try {
-      const res = await fetch("https://randomuser.me/api/?results=2");
+      const res = await fetch("https://randomuser.me/api/?results=6");
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
       setUsers((prev) => [...prev, ...data.results]);
