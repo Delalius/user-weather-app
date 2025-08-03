@@ -17,7 +17,28 @@ export default function SavedUsersPage() {
       const res = await fetch("/api/users");
       if (!res.ok) throw new Error("Failed to fetch saved users");
       const data = await res.json();
-      setSavedUsers(data);
+
+      const transformedUsers: User[] = data.map((u: any) => ({
+        gender: u.gender,
+        email: u.email,
+        name: {
+          first: u.first_name,
+          last: u.last_name,
+        },
+        picture: {
+          large: u.picture_url,
+        },
+        location: {
+          city: u.city,
+          country: u.country,
+          coordinates: {
+            latitude: u.latitude,
+            longitude: u.longitude,
+          },
+        },
+      }));
+
+      setSavedUsers(transformedUsers);
     } catch (error) {
       alert("Failed to load saved users");
       console.error(error);
