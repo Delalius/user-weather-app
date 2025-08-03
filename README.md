@@ -1,40 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# User Weather App
 
-## Getting Started
+A **React + Next.js** application that displays user profiles along with current weather information based on their location. Users can save favorite profiles locally on the server and retrieve their weather data anytime.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Features
+
+- **User Profiles**: Fetches and displays users with detailed, stylish profile cards.
+- **Weather Info**: Shows current weather for each user's location with clear, meaningful icons.
+- **Persistent Saving**: Save users to a local JSON file on the server instead of localStorage.
+- **Responsive Design**: UI adapts seamlessly across desktop, tablet, and mobile devices.
+- **Breadcrumb Navigation**: Improves app usability and navigation clarity.
+- **Smooth Animations**: Enhanced user experience using Framer Motion for transitions.
+
+---
+
+## Bonus Points Implemented
+
+- **Next.js API Routes**  
+  All third-party API requests (e.g., weather data from Open-Meteo) are proxied through Next.js API routes for improved security and API key hiding.
+
+- **Persistent Storage**  
+  Saved users are stored in a local JSON file (`/data/savedUsers.json`) on the server, avoiding the limitations of client-side localStorage.
+
+- **Responsive Design**  
+  Fully responsive UI that looks great on any device — from small phones to large desktops.
+
+---
+
+## Project Structure
+
+```
+/pages
+  ├── index.tsx               # Main user listing page
+  ├── saved.tsx               # Saved users page
+  ├── api
+       ├── users.ts           # API routes for saving, retrieving, deleting users
+       └── weather.ts         # API route fetching weather from Open-Meteo
+/components                   # Reusable React components (UserCard, WeatherModal, Header, Breadcrumbs)
+/data                        # Local JSON file storage (savedUsers.json)
+/types                       # TypeScript interfaces and types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## API Routes
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+| Method | Endpoint      | Description                            |
+|--------|---------------|----------------------------------------|
+| GET    | `/api/users`  | Retrieve saved users                   |
+| POST   | `/api/users`  | Save a new user to the local JSON file |
+| DELETE | `/api/users`  | Remove a user by email                 |
+| GET    | `/api/weather`| Fetch current weather by lat/lon       |
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## AI Usage Disclosure
 
-## Learn More
+- This project was assisted by **AI (ChatGPT)** for:
+  - Optimizing React components and Next.js API routes
+  - Writing descriptive comments
+  - Improving code readability and structure
+  - Suggesting best development practices
 
-To learn more about Next.js, take a look at the following resources:
+- All architectural and logical decisions were reviewed and adapted manually by the developer.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Future Improvements
 
-## Deploy on Vercel
+- Implement **user authentication** to personalize saved profiles.
+- Enhance weather data with more metrics such as humidity, wind speed, and forecasts.
+- Switch from local JSON file storage to a **real database** (e.g., MongoDB, PostgreSQL).
+- Add **pagination** and filtering for managing large user lists.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+---
