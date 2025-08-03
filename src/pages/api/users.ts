@@ -1,92 +1,67 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import fs from "fs";
-import path from "path";
+import { supabase } from "@/lib/supabaseClient";
 import { User } from "@/types";
 
-// Path to the JSON file storing saved users.
-// Using absolute path relative to project root for consistency.
-const filePath = path.resolve(process.cwd(), "data", "savedUsers.json");
-
-/**
- * Reads users from the JSON file.
- * Returns an empty array if file doesn't exist or parsing fails.
- */
-function readUsers(): User[] {
-  try {
-    const jsonData = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(jsonData);
-  } catch (error) {
-    console.error("Failed to read users:", error);
-    return [];
-  }
-}
-
-
-/**
- * Writes the array of users back to the JSON file,
- * formatting with 2 spaces indentation for readability.
- */
-function writeUsers(users: User[]) {
-  fs.writeFileSync(filePath, JSON.stringify(users, null, 2));
-}
-
-/**
- * API route handler supporting GET, POST, and DELETE methods.
- * - GET: returns all saved users
- * - POST: adds a new user, rejects duplicates by email
- * - DELETE: removes a user by email
- */
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
-    const users = readUsers();
-    return res.status(200).json(users);
+    const { data, error } = await supabase.from("users").select("*");
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
   }
 
   if (req.method === "POST") {
     const newUser: User = req.body;
 
-    // Basic validation: user object must exist and have an email
     if (!newUser || !newUser.email) {
       return res.status(400).json({ error: "Invalid user data" });
     }
 
-    const users = readUsers();
+    // Проверка существования пользователя
+    const { data: existingUser, error: fetchError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", newUser.email)
+      .single();
 
-    // Check for existing user by email to prevent duplicates
-    if (users.find((u) => u.email === newUser.email)) {
+    if (fetchError && fetchError.code !== "PGRST116") {
+      // Ошибка запроса, кроме "no rows found"
+      return res.status(500).json({ error: fetchError.message });
+    }
+
+    if (existingUser) {
       return res.status(409).json({ error: "User already saved" });
     }
 
-    users.push(newUser);
-    writeUsers(users);
+    // Вставка нового пользователя
+    const { error: insertError } = await supabase.from("users").insert({
+      gender: newUser.gender,
+      first_name: newUser.name.first,
+      last_name: newUser.name.last,
+      email: newUser.email,
+      city: newUser.location.city,
+      country: newUser.location.country,
+      latitude: newUser.location.coordinates.latitude,
+      longitude: newUser.location.coordinates.longitude,
+      picture_url: newUser.picture.large,
+    });
+
+    if (insertError) {
+      return res.status(500).json({ error: insertError.message });
+    }
 
     return res.status(201).json({ message: "User saved", user: newUser });
   }
 
   if (req.method === "DELETE") {
     const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required" });
 
-    // Email is required to delete user
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
-    }
+    const { error } = await supabase.from("users").delete().eq("email", email);
+    if (error) return res.status(500).json({ error: error.message });
 
-    let users = readUsers();
-    const initialLength = users.length;
-
-    // Filter out user with matching email
-    users = users.filter((u) => u.email !== email);
-
-    // If length didn't change, user not found
-    if (users.length === initialLength) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    writeUsers(users);
     return res.status(200).json({ message: "User deleted" });
   }
 
-  // Method not allowed - specify allowed methods in header
   res.setHeader("Allow", ["GET", "POST", "DELETE"]);
   return res.status(405).end(`Method ${req.method} Not Allowed`);
 }

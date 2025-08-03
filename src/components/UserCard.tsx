@@ -3,7 +3,6 @@ import WeatherModal from "./WeatherModal";
 import { User } from "@/types/index";
 import { motion } from "framer-motion";
 import { FaSave, FaCloudSun } from "react-icons/fa";
-import Image from "next/image";
 
 interface UserCardProps {
   user: User;
