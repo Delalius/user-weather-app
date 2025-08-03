@@ -92,13 +92,11 @@ const UserCard: React.FC<UserCardProps> = ({ user, showSave = true }) => {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="bg-gradient-to-br from-gray-800 via-gray-900 to-black border border-gray-700 rounded-2xl p-6 flex flex-col items-center shadow-xl transition-all duration-300 hover:shadow-2xl"
       >
-        {/* User avatar with optimized Next.js Image component */}
-        <Image
+        {/* User avatar*/}
+        <img
           src={user.picture.large}
           alt={`${user.name.first} ${user.name.last}`}
-          width={112}
-          height={112}
-          className="rounded-full object-cover border-4 border-gray-700"
+          className="rounded-full w-32 h-32 object-cover"
         />
 
         <h3 className="mt-4 text-xl font-semibold text-center text-white tracking-wide">
